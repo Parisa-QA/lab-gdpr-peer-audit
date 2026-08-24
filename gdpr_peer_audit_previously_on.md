@@ -1,4 +1,4 @@
-# GDPR and EU AI Act Peer Audit — Previously On: Love Is Blind  
+# GDPR and EU AI Act Peer Audit — Previously On: Love Is Blind
 
 **Auditor:** Parisa Dehghani  
 **Builder:** Louise Plessis  
@@ -33,6 +33,31 @@ I reviewed Louise's system brief independently before consulting her self-audit 
 
 Louise confirmed that the system is currently a **closed prototype** and is not offered to EU users. Article 2(8) excludes pre-market research, testing and development activities from the AI Act, provided they are not real-world testing; GDPR and other applicable Union law still apply to personal data processed during development. Before any EU launch, the classification and role allocation must be confirmed again. See [AI Act Article 2](https://ai-act-service-desk.ec.europa.eu/en/ai-act/article-2) and [Article 50](https://ai-act-service-desk.ec.europa.eu/en/ai-act/article-50).
 
+### GDPR personal-data summary
+
+| Data category | Source | Purpose(s) | Crosses an EU border? | Special category? |
+|---|---|---|---|---|
+| User requests and selected episode | Viewer using the prototype | Select the recap scope and generate the requested output | Cannot determine from brief; depends on hosting and API regions | Not intentionally; free text could contain sensitive information |
+| YouTube comments and usernames | YouTube/public web sources | Provide audience reactions and source material for the recap | Cannot determine from brief; YouTube/API routing is not documented | Not intentionally; comments may contain sensitive claims |
+| Contestant names, relationships and other public information | Public web sources and retrieved documents | Describe the programme and generate the recap | Cannot determine from brief; source and retrieval-provider regions are not documented | Not intentionally, but sensitive information may be mentioned or inferred |
+| Retrieved/indexed source material | Tavily, YouTube, TMDB, OMDb and Pinecone | Retrieval-augmented generation and source support | Likely; provider locations and transfer safeguards are not evidenced | Cannot determine from brief |
+| Generated recap text and source links | OpenAI generation and application output | Deliver the entertainment recap to the viewer | Likely; OpenAI and hosting locations must be confirmed | May reproduce sensitive claims about identifiable people |
+
+The system does not intentionally collect special-category data. However, public comments and source material may contain it incidentally. A field-level filter, retention rule, and legal review are required before launch.
+
+### GDPR role map
+
+| Entity | Role | Processing activity | DPA needed? | Current status |
+|---|---|---|---|---|
+| Louise or the future operating entity | Controller / future provider | Decides the purpose and means, receives requests, generates and publishes recaps | Not applicable to its own controller role; vendor contracts are needed | Controller identity and future operator are not finally confirmed |
+| OpenAI | Processor or independent provider — to confirm contractually | Generates recap text from prompts and retrieved context | Yes if acting as a processor | DPA, regions, retention, and training-use terms not evidenced |
+| Pinecone | Processor or independent provider — to confirm | Stores and retrieves indexed source material | Yes if acting as a processor | DPA, deletion, region, and transfer safeguards not evidenced |
+| Tavily | Processor or independent provider — to confirm | Performs web search/API retrieval | Yes if acting as a processor | DPA, region, and transfer safeguards not evidenced |
+| YouTube/Google, TMDB and OMDb | Independent platforms/providers; exact role depends on use | Supply public content or API data and process API requests | Contract/DPA position requires legal review | Terms, regions, and reuse permissions require confirmation |
+| Viewer | Data subject where their request or account data is personal data | Submits requests and receives the recap | No DPA | No rights-request or deletion workflow is documented |
+
+If the system later processes data for a client, the client may be the controller and the operating entity may be the processor. The exact arrangement must be documented before launch. International transfers require an adequacy decision, SCCs, or another valid Chapter V mechanism; none is evidenced here.
+
 ## Phase 3 — Clarifying questions log
 
 **Information requested from Louise on 19 August 2026; written answers received on 19 August 2026.** The returned questionnaire is retained separately as audit-trail evidence. Its evidence-link fields were blank, so Louise's responses are treated as client statements unless independently supported by the repository or further documentation.
@@ -55,7 +80,25 @@ Previously On generates a Love Is Blind recap up to a viewer-selected episode. I
 
 The future-deployment tier is **limited risk / transparency**. The entertainment use is neither prohibited nor listed in Annex III. For a future EU product, Articles 50(1), 50(2) and 50(5) address direct interaction, machine-readable marking of synthetic text, and clear accessible notice at first interaction or exposure. Article 50(4)'s public-interest text rule is not the main basis because Louise confirms an entertainment-only purpose. Current closed development may fall within Article 2(8), but that does not remove GDPR duties.
 
-### 3. Role map
+### 3. Phase 4 obligations checklist
+
+| Obligation / control | Status | Evidence or gap |
+|---|---|---|
+| Intended purpose remains entertainment rather than an Annex III high-risk use | Appears met | Louise's clarification confirms the current intended purpose is entertainment and the prototype is closed. |
+| AI-generated interaction is disclosed to the viewer | Gap identified | No dedicated AI notice is currently present. |
+| Generated text has machine-readable synthetic-content marking | Gap identified | No marking method is documented. |
+| Purpose and lawful basis are documented | Gap identified | Legitimate interests is proposed, but the LIA is not complete. |
+| Personal data is minimised and unnecessary identifiers are filtered | Gap identified | Usernames and identifiers are not systematically filtered. |
+| Special-category data is screened and controlled | Cannot determine from brief | Public comments and source text may contain sensitive claims. |
+| Vendors and controller/processor roles are documented | Gap identified | OpenAI, Pinecone, Tavily, YouTube/Google, TMDB and OMDb roles require confirmation. |
+| DPAs and international-transfer safeguards are in place | Cannot determine from brief | DPAs, regions, SCCs/adequacy decisions are not evidenced. |
+| Retention and deletion are enforced | Gap identified | Indexed material may remain until manual deletion; no schedule is documented. |
+| Privacy notice and data-subject-rights workflow exist | Gap identified | No access, correction, objection, or erasure workflow is visible. |
+| Accuracy, provenance, and correction controls exist | Gap identified | No human editorial review or correction route is documented. |
+| Security and incident-response controls are documented | Cannot determine from brief | The evidence reviewed does not establish production security or breach procedures. |
+| DPIA screening has been completed before launch | Gap identified | DPIA screening and residual-risk approval are not evidenced. |
+
+### 4. AI Act provider and deployment role map
 
 | Role | Entity | Key obligations or controls |
 |---|---|---|
@@ -65,7 +108,7 @@ The future-deployment tier is **limited risk / transparency**. The entertainment
 | GPAI/model vendor | OpenAI | Upstream model obligations and contractual information; product duties remain with the system provider. |
 | Data/infrastructure vendors | Pinecone, Tavily, YouTube/Google, TMDB and OMDb | Processor/controller analysis, DPAs, hosting, transfers, retention, licences and API terms. |
 
-### 4. Compliance findings
+### 5. Compliance findings
 
 #### Finding 1 — No direct-interaction AI disclosure  
 **Severity:** Significant for EU launch  
@@ -97,29 +140,43 @@ The future-deployment tier is **limited risk / transparency**. The entertainment
 **Recommended action:** Fail closed on inconclusive checks, qualify the absolute UI claim, log safeguard failures and test adversarial future-episode leakage.  
 **Escalation needed?** **No** for the engineering change; seek consumer-law review before making an absolute production claim.
 
-### 5. Overall recommendation
+### 6. Overall recommendation
 
 **Proceed with conditions.** Closed-prototype development may continue. A public EU launch should not proceed until Article 50 disclosure and marking are implemented, the GDPR data and vendor lifecycle is documented, retention/deletion and data-subject-rights controls exist, claims about people can be corrected, and the spoiler safeguard fails safely. Louise's answers confirm rather than remove the material gaps.
 
-### 6. What this report is not
+### 7. What this report is not
 
 This report is not a legal opinion, conformity assessment or certification. It is a first-pass educational review based on the system brief, repository and written responses available on 19 August 2026. Conclusions must be verified with qualified legal counsel before placement on the EU market or putting the system into service.
 
 ## Phase 5 — Debrief record
 
-### Auditor presentation and builder response
+### Step 1 — Auditor presents the audit
 
 - Written builder responses received: **19 August 2026**
 - New information: current closed-prototype status; no Article 50 controls; entertainment-only purpose; hard-coded facts; proposed legitimate-interests basis; no documented retention or rights workflow.
 - Evidence status: responses retained in the answered questionnaire, but no supporting links were supplied.
 
-### Classification comparison
+### Step 2 — Builder responds
+
+Louise confirmed that the system is a closed entertainment prototype, that no AI notice or machine-readable marking exists, that some facts are hard-coded, and that there is no human editorial review. She also confirmed unresolved vendor, retention, deletion, and data-subject-rights controls.
+
+### Step 3 — Lawful-basis comparison
+
+- **Auditor's reading:** Legitimate interests may be possible for limited public-source retrieval, but only after a documented three-part LIA, data minimisation, and a transfer/vendor review.
+- **Builder's reading:** Legitimate interests was proposed as the working basis, but no completed LIA or supporting vendor evidence was available.
+- **Resolution:** The cautious reading is stronger. Legitimate interests remains provisional until necessity, balancing, transparency, and the rights impact are documented.
+
+### Step 4 — DPIA comparison
+
+- **Auditor's reading:** DPIA screening is needed because the system combines public-source data, uses innovative retrieval/generation technology, and may involve cross-border processing.
+- **Builder's reading:** No completed DPIA screening or residual-risk approval was supplied.
+- **Resolution:** The project should complete DPIA screening before any public launch; a full DPIA remains subject to scale, hosting, and final data flows.
+
+### Step 5 — Gap-list comparison
 
 - Auditor's tier: **Limited risk / transparency for a future EU deployment**
 - Builder's self-audit tier: **Limited risk / transparency**
 - Result: **Agreement.** The answers clarify present development scope but do not change the future-deployment tier.
-
-### Gap-list comparison
 
 - Identified by both: missing AI disclosure, personal-data minimisation, vendor/data-flow documentation, provenance and production governance.
 - Strengthened by Louise's answers: no retention schedule, deletion mechanism or data-subject-rights workflow; legitimate interests remains only provisional.
@@ -127,7 +184,7 @@ This report is not a legal opinion, conformity assessment or certification. It i
 - Mitigation added by Louise: some facts are hard-coded, reducing but not eliminating accuracy risk.
 - Unresolved: actual vendor regions, DPAs, transfer safeguards and source/platform-rights evidence.
 
-### Required joint closing note
+### Step 6 — Joint closing note
 
 **Draft for Parisa and Louise to confirm together:**
 
